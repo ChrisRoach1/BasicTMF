@@ -1,0 +1,31 @@
+<p>This component demonstrates fetching data from the server.</p>
+
+
+
+
+<div *ngIf="studies$ | async; let studies; else loading" class="overflow-x-auto">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Project ID</th>
+        <th>Compound</th>
+        <th>Sponsor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      <tr class="bg-base-200" *ngFor="let study of studies$ | async">
+        <td>{{ study.id }}</td>
+        <td>{{ study.projectID }}</td>
+        <td>{{ study.compound }}</td>
+        <td>{{ study.sponsor }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #loading>
+  <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
+</ng-template>

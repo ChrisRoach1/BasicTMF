@@ -1,0 +1,67 @@
+﻿
+
+<div class="md:container md:mx-auto px-4">
+
+  <div class="navbar bg-base-100 px-4">
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h8m-8 6h16" />
+          </svg>
+        </div>
+        <ul
+          tabindex="0"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+          <li><a routerLink="/heroes-list">weather</a></li>
+          <li><a routerLink="/study-list">Studies</a></li>
+        </ul>
+      </div>
+      <a routerLink="/" class="btn btn-ghost text-xl">Trial Master File</a>
+      @if(user){
+        <select class="select select-sm w-full max-w-xs" (change)="test()">
+          <option disabled selected>Select a Study</option>
+          <option>DAL301</option>
+          <option>ACE8302</option>
+        </select>
+      }
+    </div>
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal px-1">
+        <li><a routerLink="/heroes-list">weather</a></li>
+        <li><a routerLink="/study-list">Studies</a></li>
+      </ul>
+    </div>
+    <div class="navbar-end space-x-3">
+
+      @if(!user){
+        <a class="text-primary font-bold cursor-pointer" (click)="login()">Log in</a>
+      }
+
+      @if(user){
+        <a class="text-secondary font-bold cursor-pointer" (click)="logout()">Log out</a>
+      }
+    </div>
+  </div>
+
+  <router-outlet></router-outlet>
+
+  <div class="toast" *ngIf="(this.notification.notified$ | async) == true" [@fadeInOut]>
+    <div *ngIf="this.notification.notificationLevel$ | async; let notificationLevel;" class="alert"
+    [ngClass]="('alert-' + notificationLevel)">
+      <span>{{ this.notification.getNotification() }}</span>
+    </div>
+  </div>
+
+</div>
+
+

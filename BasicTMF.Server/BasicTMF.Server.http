@@ -1,0 +1,6 @@
+@BasicTMF.Server_HostAddress = http://localhost:5007
+
+GET {{BasicTMF.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
