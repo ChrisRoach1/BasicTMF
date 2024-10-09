@@ -28,10 +28,15 @@
       </div>
       <a routerLink="/" class="btn btn-ghost text-xl">Trial Master File</a>
       @if(user){
-        <select class="select select-sm w-full max-w-xs" (change)="test()">
-          <option disabled selected>Select a Study</option>
-          <option>DAL301</option>
-          <option>ACE8302</option>
+        <select *ngIf="studies$ | async; let studies;" class="select select-sm w-full max-w-xs font-bold"
+        [(ngModel)]="selectedStudyID"
+        (change)="studyChanged()">
+          <option selected [ngValue]=undefined  class="font-bold">Select a Study</option>
+
+          @for (study of studies; track study) {
+            <option [ngValue]="study.id" class="font-bold">{{ study.projectID }}</option>
+          }
+
         </select>
       }
     </div>
@@ -57,7 +62,10 @@
 
   <div class="toast" *ngIf="(this.notification.notified$ | async) == true" [@fadeInOut]>
     <div *ngIf="this.notification.notificationLevel$ | async; let notificationLevel;" class="alert"
-    [ngClass]="('alert-' + notificationLevel)">
+    [ngClass]="{'warning': 'alert alert-warning',
+                'error' : 'alert alert-error',
+                'info' : 'alert alert-info',
+                'success' : 'alert alert-success'} [notificationLevel]">
       <span>{{ this.notification.getNotification() }}</span>
     </div>
   </div>

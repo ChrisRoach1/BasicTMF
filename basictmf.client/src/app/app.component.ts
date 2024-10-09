@@ -3,9 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { AuthService, User } from '@auth0/auth0-angular';
 import { LocalAuthService } from '../services/local-auth.service';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, take, tap } from 'rxjs';
 import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 import { NotificationService } from '../services/notification.service';
+import { StudyService } from '../services/study.service';
+import { Study } from '../models/study';
 
 export function FadeInOut(timingIn: number, timingOut: number, height: boolean = false): AnimationTriggerMetadata  {
   return trigger('fadeInOut', [
@@ -31,13 +33,17 @@ export class AppComponent implements OnInit {
   title = 'TMF';
   public isTextVisible: boolean = false;
   public showNotification$: Observable<boolean> = new Observable<boolean>();
-
+  public studies: BehaviorSubject<Study[] | null> = new BehaviorSubject<Study[] | null>(null);
+  public studies$ = this.studies.asObservable();
+  public selectedStudyID: number | undefined = undefined;
 
   constructor(private http: HttpClient,public auth: AuthService,
     @Inject(DOCUMENT) public document: Document, private localAuth: LocalAuthService,
-    public notification: NotificationService)
+    public notification: NotificationService, private studyService: StudyService)
   {
     this.showNotification$ = this.notification.notified$;
+    this.studies$ = this.studyService.getAllStudies();
+
   }
 
   ngOnInit() {
@@ -45,6 +51,9 @@ export class AppComponent implements OnInit {
       this.user = x;
     });
 
+    this.studyService.selectedStudy$.pipe(take(1), tap(study =>{
+      this.selectedStudyID = study?.id;
+    })).subscribe();
   }
 
   login() {
@@ -56,9 +65,15 @@ export class AppComponent implements OnInit {
     })).subscribe();
   }
 
-  test(){
-    this.notification.setNotification('test', 'error');
-    this.isTextVisible = true;
+  studyChanged(){
+    console.log(this.selectedStudyID);
+    this.studies$.subscribe(studies => {
+      var study  = studies?.filter(x => x.id == this.selectedStudyID)[0] ?? null;
+      this.studyService.setSelectedStudy(study);
+      this.notification.setNotification('Study Switched', 'success');
+      this.isTextVisible = true;
+    });
+
   }
 
   logout() {
